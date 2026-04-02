@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Token Portfolio Manager</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🪙 Token Portfolio Manager</h1>
+
+    <!-- Add / Edit Token Form -->
+    <section class="card" id="add-section">
+      <h2>Add Token</h2>
+      <form id="add-form">
+        <div class="form-row">
+          <label for="token-address">Token Address</label>
+          <input
+            type="text"
+            id="token-address"
+            placeholder="0x…"
+            required
+          />
+        </div>
+        <div class="form-row">
+          <label for="token-id">CoinGecko ID</label>
+          <input
+            type="text"
+            id="token-id"
+            placeholder="e.g. ethereum, bitcoin, uniswap"
+            required
+          />
+        </div>
+        <div class="form-row">
+          <label for="token-name">Token Name</label>
+          <input type="text" id="token-name" placeholder="e.g. Ethereum" />
+        </div>
+        <div class="form-row">
+          <label for="token-amount">Amount Held</label>
+          <input
+            type="number"
+            id="token-amount"
+            placeholder="0.00"
+            step="any"
+            min="0"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Add / Update Token</button>
+      </form>
+      <p id="form-message" class="message"></p>
+    </section>
+
+    <!-- Portfolio Table -->
+    <section class="card" id="portfolio-section">
+      <div class="section-header">
+        <h2>My Portfolio</h2>
+        <button class="btn btn-secondary" id="refresh-btn">⟳ Refresh Prices</button>
+      </div>
+      <div id="loading" class="loading hidden">Loading…</div>
+      <table id="portfolio-table">
+        <thead>
+          <tr>
+            <th>Token</th>
+            <th>Address</th>
+            <th>Amount</th>
+            <th>Price (USD)</th>
+            <th>Value (USD)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="portfolio-body">
+          <!-- rows injected by JS -->
+        </tbody>
+      </table>
+      <p id="no-tokens" class="empty-message hidden">
+        No tokens in portfolio yet. Add one above!
+      </p>
+    </section>
+
+    <!-- Total -->
+    <section class="card total-card">
+      <span>Total Portfolio Value</span>
+      <span id="total-value" class="total-amount">—</span>
+    </section>
+  </div>
+
+  <script src="/static/js/portfolio.js"></script>
+</body>
+</html>
