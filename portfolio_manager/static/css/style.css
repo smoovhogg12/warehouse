@@ -1,0 +1,203 @@
+/* ── Reset & base ─────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: #f0f2f5;
+  color: #1a1a2e;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+/* ── Layout ───────────────────────────────────────────────────────── */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #16213e;
+}
+
+h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #16213e;
+}
+
+/* ── Cards ────────────────────────────────────────────────────────── */
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Form ─────────────────────────────────────────────────────────── */
+.form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.form-row label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: #444;
+}
+
+.form-row input {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+.form-row input:focus {
+  outline: none;
+  border-color: #4361ee;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: #4361ee;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background: #e8eaf6;
+  color: #3949ab;
+}
+
+.btn-secondary:hover {
+  background: #c5cae9;
+}
+
+.btn-danger {
+  background: #fde8e8;
+  color: #c0392b;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.82rem;
+}
+
+.btn-danger:hover {
+  background: #f5c6c6;
+}
+
+/* ── Messages ─────────────────────────────────────────────────────── */
+.message {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.message.success { color: #27ae60; }
+.message.error   { color: #c0392b; }
+
+/* ── Table ────────────────────────────────────────────────────────── */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+thead th {
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  background: #f7f8fc;
+  border-bottom: 2px solid #e0e4ef;
+  font-weight: 600;
+  color: #555;
+}
+
+tbody tr {
+  border-bottom: 1px solid #f0f2f5;
+  transition: background 0.15s;
+}
+
+tbody tr:hover {
+  background: #f7f8fc;
+}
+
+tbody td {
+  padding: 0.65rem 0.8rem;
+  vertical-align: middle;
+}
+
+.token-name { font-weight: 600; }
+
+.address-cell {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: #666;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Total card ───────────────────────────────────────────────────── */
+.total-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.total-amount {
+  font-size: 1.4rem;
+  color: #4361ee;
+}
+
+/* ── Utilities ────────────────────────────────────────────────────── */
+.hidden { display: none !important; }
+
+.loading {
+  text-align: center;
+  padding: 1rem;
+  color: #888;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 1.5rem;
+  color: #888;
+  font-size: 0.95rem;
+}
