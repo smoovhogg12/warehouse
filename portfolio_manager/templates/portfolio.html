@@ -10,6 +10,24 @@
   <div class="container">
     <h1>🪙 Token Portfolio Manager</h1>
 
+    <!-- Stripe actions nav -->
+    <div class="stripe-nav">
+      <a href="/deposit" class="btn btn-primary">💳 Deposit</a>
+      <a href="/withdraw" class="btn btn-secondary">🏦 Withdraw</a>
+      <a href="/transactions" class="btn btn-secondary" id="tx-nav-btn" target="_blank">📋 Transactions</a>
+    </div>
+
+    <!-- Multi-currency balances -->
+    <section class="card" id="balances-section">
+      <div class="section-header">
+        <h2>Currency Balances</h2>
+        <button class="btn btn-secondary" id="balances-refresh-btn">⟳ Refresh</button>
+      </div>
+      <div id="balances-container" class="balances-grid">
+        <!-- injected by JS -->
+      </div>
+    </section>
+
     <!-- Add / Edit Token Form -->
     <section class="card" id="add-section">
       <h2>Add Token</h2>

@@ -12,6 +12,15 @@ function formatUSD(value) {
   }).format(value);
 }
 
+function formatCurrency(amount, currency) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency.toUpperCase(),
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+}
+
 function showMessage(text, type = "success") {
   const el = document.getElementById("form-message");
   el.textContent = text;
@@ -20,6 +29,47 @@ function showMessage(text, type = "success") {
     el.textContent = "";
     el.className = "message";
   }, 4000);
+}
+
+// ── Currency balances ──────────────────────────────────────────────────────
+
+async function loadBalances() {
+  const container = document.getElementById("balances-container");
+  if (!container) return;
+
+  try {
+    const resp = await fetch(`${API_BASE}/transactions`);
+    if (!resp.ok) throw new Error("Failed to fetch transactions");
+    const data = await resp.json();
+    const transactions = data.transactions || [];
+
+    // Aggregate completed deposits and payouts per currency
+    const balances = { usd: 0, eur: 0, gbp: 0 };
+    for (const tx of transactions) {
+      if (tx.status !== "completed") continue;
+      const cur = (tx.currency || "usd").toLowerCase();
+      if (!(cur in balances)) balances[cur] = 0;
+      if (tx.type === "deposit") {
+        balances[cur] += tx.amount;
+      } else if (tx.type === "payout") {
+        balances[cur] -= tx.amount;
+      }
+    }
+
+    const currencyLabels = { usd: "🇺🇸 USD", eur: "🇪🇺 EUR", gbp: "🇬🇧 GBP" };
+    container.innerHTML = Object.entries(balances)
+      .map(
+        ([cur, bal]) => `
+        <div class="balance-chip">
+          <span class="balance-label">${currencyLabels[cur] || cur.toUpperCase()}</span>
+          <span class="balance-amount">${formatCurrency(bal, cur)}</span>
+        </div>`
+      )
+      .join("");
+  } catch (_err) {
+    console.error("Failed to load currency balances:", _err);
+    container.innerHTML = '<p class="empty-message">Unable to load balances.</p>';
+  }
 }
 
 // ── Fetch & render portfolio ───────────────────────────────────────────────
@@ -151,8 +201,12 @@ function escapeHtml(str) {
 
 document.addEventListener("DOMContentLoaded", () => {
   loadPortfolio();
+  loadBalances();
   document.getElementById("add-form").addEventListener("submit", addToken);
   document
     .getElementById("refresh-btn")
     .addEventListener("click", loadPortfolio);
+  document
+    .getElementById("balances-refresh-btn")
+    .addEventListener("click", loadBalances);
 });

@@ -1,8 +1,20 @@
 import json
+import logging
 import os
+import sys
 
 import requests
+import stripe
 from flask import Flask, jsonify, render_template, request
+
+# Allow sibling modules to be imported when the app is run directly.
+sys.path.insert(0, os.path.dirname(__file__))
+
+import stripe_integration  # noqa: E402
+import transactions as tx_store  # noqa: E402
+import webhooks  # noqa: E402
+
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
@@ -131,6 +143,142 @@ def remove_token(address):
 
     save_portfolio(portfolio)
     return jsonify({"message": "Token removed"})
+
+
+# ── Stripe pages ──────────────────────────────────────────────────────────
+
+
+@app.route("/deposit")
+def deposit_page():
+    """Render the multi-currency deposit form."""
+    return render_template("deposit.html")
+
+
+@app.route("/withdraw")
+def withdraw_page():
+    """Render the multi-currency withdrawal form."""
+    return render_template("withdraw.html")
+
+
+# ── Stripe API endpoints ──────────────────────────────────────────────────
+
+
+@app.route("/portfolio/deposit", methods=["POST"])
+def deposit():
+    """Create a Stripe PaymentIntent and log a pending deposit transaction.
+
+    Request body (JSON):
+        amount   – deposit amount in major currency units (e.g. 10.50)
+        currency – one of eur, gbp, usd
+    """
+    body = request.get_json(force=True, silent=True) or {}
+    currency = (body.get("currency") or "usd").strip().lower()
+
+    try:
+        amount = float(body.get("amount", 0))
+    except (TypeError, ValueError):
+        return jsonify({"error": "Invalid amount"}), 400
+
+    if amount <= 0:
+        return jsonify({"error": "Amount must be greater than zero"}), 400
+    if currency not in stripe_integration.SUPPORTED_CURRENCIES:
+        return jsonify({"error": f"Unsupported currency: {currency}"}), 400
+
+    amount_cents = int(round(amount * 100))
+
+    try:
+        intent = stripe_integration.create_payment_intent(
+            amount_cents, currency, metadata={"source": "portfolio_manager"}
+        )
+    except stripe.error.StripeError as exc:
+        logger.error("Stripe error creating PaymentIntent: %s", exc)
+        return jsonify({"error": "Payment provider error. Please try again later."}), 502
+
+    tx_store.log_transaction(
+        stripe_id=intent["id"],
+        transaction_type="deposit",
+        amount=amount,
+        currency=currency,
+        status="pending",
+    )
+
+    return jsonify(
+        {
+            "client_secret": intent["client_secret"],
+            "payment_intent_id": intent["id"],
+            "amount": amount,
+            "currency": currency,
+        }
+    ), 201
+
+
+@app.route("/portfolio/withdraw", methods=["POST"])
+def withdraw():
+    """Create a Stripe Payout and log a pending payout transaction.
+
+    Request body (JSON):
+        amount   – withdrawal amount in major currency units (e.g. 10.50)
+        currency – one of eur, gbp, usd
+    """
+    body = request.get_json(force=True, silent=True) or {}
+    currency = (body.get("currency") or "usd").strip().lower()
+
+    try:
+        amount = float(body.get("amount", 0))
+    except (TypeError, ValueError):
+        return jsonify({"error": "Invalid amount"}), 400
+
+    if amount <= 0:
+        return jsonify({"error": "Amount must be greater than zero"}), 400
+    if currency not in stripe_integration.SUPPORTED_CURRENCIES:
+        return jsonify({"error": f"Unsupported currency: {currency}"}), 400
+
+    amount_cents = int(round(amount * 100))
+
+    try:
+        payout = stripe_integration.create_payout(
+            amount_cents, currency, description="Portfolio withdrawal"
+        )
+    except stripe.error.StripeError as exc:
+        logger.error("Stripe error creating Payout: %s", exc)
+        return jsonify({"error": "Payment provider error. Please try again later."}), 502
+
+    tx_store.log_transaction(
+        stripe_id=payout["id"],
+        transaction_type="payout",
+        amount=amount,
+        currency=currency,
+        status="pending",
+    )
+
+    return jsonify(
+        {
+            "payout_id": payout["id"],
+            "amount": amount,
+            "currency": currency,
+            "status": payout["status"],
+        }
+    ), 201
+
+
+@app.route("/stripe/webhook", methods=["POST"])
+def stripe_webhook():
+    """Handle Stripe webhook events."""
+    payload = request.get_data()
+    sig_header = request.headers.get("Stripe-Signature", "")
+
+    try:
+        result = webhooks.handle_webhook(payload, sig_header)
+    except stripe.error.SignatureVerificationError:
+        return jsonify({"error": "Invalid signature"}), 400
+
+    return jsonify(result)
+
+
+@app.route("/transactions", methods=["GET"])
+def get_transactions():
+    """Return all recorded transactions."""
+    return jsonify({"transactions": tx_store.get_transactions()})
 
 
 if __name__ == "__main__":
