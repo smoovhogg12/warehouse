@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deposit – Token Portfolio Manager</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>💳 Deposit Funds</h1>
+    <p class="page-subtitle"><a href="/">← Back to Portfolio</a></p>
+
+    <section class="card" id="deposit-section">
+      <h2>Add Funds to Your Portfolio</h2>
+      <form id="deposit-form">
+        <div class="form-row">
+          <label for="deposit-amount">Amount</label>
+          <input
+            type="number"
+            id="deposit-amount"
+            placeholder="0.00"
+            step="0.01"
+            min="0.01"
+            required
+          />
+        </div>
+        <div class="form-row">
+          <label for="deposit-currency">Currency</label>
+          <select id="deposit-currency" required>
+            <option value="usd">USD – US Dollar</option>
+            <option value="eur">EUR – Euro</option>
+            <option value="gbp">GBP – British Pound</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary" id="deposit-btn">
+          💳 Create Deposit
+        </button>
+      </form>
+      <p id="deposit-message" class="message"></p>
+    </section>
+
+    <section class="card hidden" id="deposit-result">
+      <h2>Deposit Created</h2>
+      <p>Your deposit has been initiated via Stripe.</p>
+      <table>
+        <tbody id="deposit-result-body"></tbody>
+      </table>
+      <p class="message success" id="deposit-success-note">
+        Complete the payment using Stripe's secure checkout. Your portfolio balance will update once the payment is confirmed.
+      </p>
+    </section>
+  </div>
+
+  <script src="/static/js/deposit.js"></script>
+</body>
+</html>

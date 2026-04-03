@@ -201,3 +201,73 @@ tbody td {
   color: #888;
   font-size: 0.95rem;
 }
+
+/* ── Stripe nav ───────────────────────────────────────────────────── */
+.stripe-nav {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* ── Currency balance chips ───────────────────────────────────────── */
+.balances-grid {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.balance-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f0f4ff;
+  border: 1px solid #d0d9f5;
+  border-radius: 12px;
+  padding: 0.8rem 1.4rem;
+  min-width: 120px;
+}
+
+.balance-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 0.3rem;
+}
+
+.balance-amount {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #4361ee;
+}
+
+/* ── Page subtitle / breadcrumb ───────────────────────────────────── */
+.page-subtitle {
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.page-subtitle a {
+  color: #4361ee;
+  text-decoration: none;
+}
+
+.page-subtitle a:hover {
+  text-decoration: underline;
+}
+
+/* ── Select ───────────────────────────────────────────────────────── */
+.form-row select {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+
+.form-row select:focus {
+  outline: none;
+  border-color: #4361ee;
+}
+
